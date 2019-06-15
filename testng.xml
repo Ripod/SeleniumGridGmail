@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Suite1" verbose="1" >
+    <test name="default">
+        <classes>
+            <class name="ru.ripod.tests.CucumberRunner"/>
+        </classes>
+    </test>
+</suite>
