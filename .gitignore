@@ -2,3 +2,4 @@
 IPRtaskproject.iml
 target/*
 bin/
+logs/
