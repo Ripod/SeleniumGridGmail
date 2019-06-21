@@ -51,7 +51,7 @@ public class StepDefinition {
 
 
     @After
-    public void closeBrowser() throws InterruptedException {
+    public void closeBrowser() {
         basicPage.closeBrowser();
     }
 
