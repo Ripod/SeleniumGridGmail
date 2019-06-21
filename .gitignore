@@ -1,2 +1,5 @@
 .idea/
 IPRtaskproject.iml
+target/*
+bin/
+logs/
