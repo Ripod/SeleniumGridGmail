@@ -51,7 +51,7 @@ public class StepDefinition {
 
 
     @After
-    public void closeBrowser(){
+    public void closeBrowser() throws InterruptedException {
         basicPage.closeBrowser();
     }
 
@@ -76,5 +76,25 @@ public class StepDefinition {
             logger.warn("Problem reading properties file");
         }
         String login = credProperties.getProperty(usedBrowser.get()+"login");
+        authorizationPage.switchToNextTab();
+        authorizationPage.inputLogin(login);
+    }
+
+    @И("нажимаем кнопку {string} на странице авторизации")
+    public void pressAuthPageButton(String buttonName) {
+        authorizationPage.pressButton(buttonName);
+    }
+
+    @И("вводим пароль из файла {string}")
+    public void inputPasswordFromFile(String fileName) {
+        Properties credProperties = new Properties();
+        try {
+            InputStream credInputStream = new FileInputStream(fileName);
+            credProperties.load(credInputStream);
+        } catch (IOException e) {
+            logger.warn("Problem reading properties file");
+        }
+        String password = credProperties.getProperty(usedBrowser.get()+"password");
+        authorizationPage.inputPassword(password);
     }
 }

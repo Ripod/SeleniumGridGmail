@@ -12,42 +12,58 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Set;
 
 public abstract class RemoteSingletonDriver {
     protected RemoteWebDriver remoteWebDriver;
     protected WebDriverWait wait;
     Properties properties = new Properties();
 
-    public void openPage(String url){
+    public void openPage(String url) {
         remoteWebDriver.get("http://" + url);
     }
+
     Logger infoLogger;
-    private WebElement getElement(String xpath){
+
+    private WebElement getElement(String xpath) {
         WebElement element = null;
-        for(int i = 0; i < 5; i++){
-            try{
+        for (int i = 0; i < 5; i++) {
+            try {
                 element = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
                 element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
                 element = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
                 return element;
-            } catch (StaleElementReferenceException e){
+            } catch (StaleElementReferenceException e) {
                 infoLogger.error("Stale exception" + e.toString());
-            } catch (Exception exception){
+            } catch (Exception exception) {
                 infoLogger.error("Caught exception" + exception.toString());
             }
         }
         return null;
     }
 
-    public void click(String xpath){
+    public void click(String xpath) {
         Objects.requireNonNull(getElement(xpath)).click();
     }
 
-    public void sendKeys(String xpath, String value){
+    public void sendKeys(String xpath, String value) {
         Objects.requireNonNull(getElement(xpath)).sendKeys(value);
     }
 
-    public void close(){
+    public void switchToNextTab() {
+        wait.until(ExpectedConditions.numberOfWindowsToBe(2));
+        Set<String> windows = remoteWebDriver.getWindowHandles();
+        infoLogger.info(windows.toString());
+        for (String id :
+                windows) {
+            if (!id.equals(remoteWebDriver.getWindowHandle())) {
+                remoteWebDriver.switchTo().window(id);
+                break;
+            }
+        }
+    }
+
+    public void close() {
         remoteWebDriver.quit();
     }
 }
