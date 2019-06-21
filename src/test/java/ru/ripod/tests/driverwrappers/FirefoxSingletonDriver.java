@@ -1,5 +1,6 @@
 package ru.ripod.tests.driverwrappers;
 
+import org.apache.logging.log4j.LogManager;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -13,7 +14,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-
 public class FirefoxSingletonDriver extends RemoteSingletonDriver {
 
     private static FirefoxSingletonDriver firefoxSingletonDriver;
@@ -26,6 +26,7 @@ public class FirefoxSingletonDriver extends RemoteSingletonDriver {
     }
 
     private FirefoxSingletonDriver() {
+        infoLogger = LogManager.getLogger("firefox");
         try {
             InputStream propInputStream = new FileInputStream("selenium.config");
             properties.load(propInputStream);
@@ -52,7 +53,7 @@ public class FirefoxSingletonDriver extends RemoteSingletonDriver {
         }
         remoteWebDriver.manage().window().maximize();
         remoteWebDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        wait = new WebDriverWait(remoteWebDriver, 5, 250);
+        wait = new WebDriverWait(remoteWebDriver, 2, 250);
     }
 }
 

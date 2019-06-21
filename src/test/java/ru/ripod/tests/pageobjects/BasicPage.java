@@ -9,7 +9,6 @@ import ru.ripod.tests.driverwrappers.RemoteSingletonDriver;
 public class BasicPage {
 
     protected RemoteSingletonDriver driver;
-    private String loginXpath = "//a[@id = 'gb_70']";
 
     public BasicPage(String browserName){
         switch (browserName){
@@ -26,9 +25,6 @@ public class BasicPage {
         driver.openPage(url);
     }
 
-    public boolean checkPageShow(){
-        return driver.getElement(loginXpath) != null;
-    }
 
     public void closeBrowser(){
         driver.close();

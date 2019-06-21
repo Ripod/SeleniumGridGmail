@@ -1,5 +1,6 @@
 package ru.ripod.tests.driverwrappers;
 
+import org.apache.logging.log4j.LogManager;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -26,6 +27,7 @@ public class ChromeSingletonDriver extends RemoteSingletonDriver{
     }
 
     private ChromeSingletonDriver(){
+        infoLogger = LogManager.getLogger("chrome");
         try {
             InputStream propInputStream = new FileInputStream("selenium.config");
             properties.load(propInputStream);
@@ -51,7 +53,7 @@ public class ChromeSingletonDriver extends RemoteSingletonDriver{
             remoteWebDriver = new ChromeDriver();
         }
         remoteWebDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        wait = new WebDriverWait(remoteWebDriver, 5, 250);
+        wait = new WebDriverWait(remoteWebDriver, 2, 250);
     }
 
 
