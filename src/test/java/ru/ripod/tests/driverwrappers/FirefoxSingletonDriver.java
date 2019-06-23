@@ -53,7 +53,7 @@ public class FirefoxSingletonDriver extends RemoteSingletonDriver {
         }
         remoteWebDriver.manage().window().maximize();
         remoteWebDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        wait = new WebDriverWait(remoteWebDriver, 2, 250);
+        wait = new WebDriverWait(remoteWebDriver, 5, 250);
     }
 }
 

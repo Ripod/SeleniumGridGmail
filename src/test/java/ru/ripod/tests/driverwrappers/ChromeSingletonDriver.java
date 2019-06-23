@@ -54,7 +54,7 @@ public class ChromeSingletonDriver extends RemoteSingletonDriver{
         }
         remoteWebDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         remoteWebDriver.manage().window().maximize();
-        wait = new WebDriverWait(remoteWebDriver, 2, 250);
+        wait = new WebDriverWait(remoteWebDriver, 5, 250);
     }
 
 

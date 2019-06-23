@@ -29,4 +29,6 @@ public class BasicPage {
     public void closeBrowser(){
         driver.close();
     }
+
+
 }

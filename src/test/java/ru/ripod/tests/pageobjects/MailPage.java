@@ -1,0 +1,61 @@
+package ru.ripod.tests.pageobjects;
+
+public class MailPage extends BasicPage {
+    private String newLetterButtonXpath = "//div[@role='button'][text()='Написать']";
+    private String receiverEmailFieldXpath = "//textarea[@aria-label='Кому']";
+    private String themeInputFieldXpath = "//input[@aria-label='Тема']";
+    private String bodyInputFieldXpath = "//div[@aria-label='Тело письма']";
+    private String newLetterWindowTitleXpath = "//h2//div[text()='Написать:']//following-sibling::div";
+    private String newLetterWindowCloseXpath = "//img[@aria-label='Сохранить и закрыть']";
+    private String partPageXpath = "//a[@title='%s']";
+    private String filledEmailFieldXpath = "//span[contains(@email,'@')][contains(text(),'@')]";
+
+    public MailPage(String browserName) {
+        super(browserName);
+    }
+
+    public void checkPageOpened(){
+        driver.checkElementIsPresent(newLetterButtonXpath);
+    }
+
+    public void pressCreateLetter(){
+        driver.click(newLetterButtonXpath);
+    }
+
+    public void inputReceiverEmail(String email){
+        driver.sendKeys(receiverEmailFieldXpath, email);
+    }
+
+    public void inputMailTheme(String theme){
+        driver.sendKeys(themeInputFieldXpath, theme);
+    }
+
+    public void inputMailBody(String body){
+        driver.sendKeys(bodyInputFieldXpath, body);
+    }
+
+    public void closeWhenDraftSaved(){
+        driver.waitText(newLetterWindowTitleXpath, "Черновик сохранен");
+        driver.click(newLetterWindowCloseXpath);
+    }
+
+    public void openMailsPagePart(String partName){
+        driver.click(String.format(partPageXpath,partName));
+    }
+
+    public void checkLetterCreateEditIsOpened(){
+        driver.checkElementIsPresent(newLetterWindowTitleXpath);
+    }
+
+    public void checkEmailValue(String expectedValue){
+        driver.checkElementText(filledEmailFieldXpath, expectedValue);
+    }
+
+    public void checkThemeValue(String expectedValue){
+        driver.checkElementValue(themeInputFieldXpath, expectedValue);
+    }
+
+    public void checkBodyValue(String expectedValue){
+        driver.checkElementText(bodyInputFieldXpath, expectedValue);
+    }
+}

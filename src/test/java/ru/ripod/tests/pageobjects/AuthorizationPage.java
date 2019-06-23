@@ -2,16 +2,18 @@ package ru.ripod.tests.pageobjects;
 
 public class AuthorizationPage extends BasicPage{
 
-    String loginFieldXpath = "//input[@id = 'identifierId']";
-    String buttonXpath = "//span[text() = '%s']";
-    String passwordXpath = "//input[@name = 'password']";
+    private String loginFieldXpath = "//input[@id = 'identifierId']";
+    private String loginFieldCSS = "input#identifierId";
+    private String buttonXpath = "//span[text() = '%s']";
+    private String passwordXpath = "//input[@name = 'password']";
+    String passwordCSS = "input[name = 'password']";
 
     public AuthorizationPage(String browserName) {
         super(browserName);
     }
 
     public void inputLogin(String login){
-        driver.sendKeys(loginFieldXpath, login);
+        driver.sendKeysByCSS(loginFieldCSS, login);
     }
 
     public void  switchToNextTab(){
@@ -23,6 +25,6 @@ public class AuthorizationPage extends BasicPage{
     }
 
     public void inputPassword(String password){
-        driver.sendKeys(passwordXpath, password);
+        driver.sendKeysByCSS(passwordCSS, password);
     }
 }

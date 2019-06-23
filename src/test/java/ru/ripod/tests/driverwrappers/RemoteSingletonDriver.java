@@ -9,6 +9,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 
 import java.util.Objects;
 import java.util.Properties;
@@ -42,12 +43,33 @@ public abstract class RemoteSingletonDriver {
         return null;
     }
 
+    private WebElement getElementByCSS(String CSS) {
+        WebElement element = null;
+        for (int i = 0; i < 5; i++) {
+            try {
+                element = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(CSS)));
+                element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(CSS)));
+                element = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(CSS)));
+                return element;
+            } catch (StaleElementReferenceException e) {
+                infoLogger.error("Stale exception" + e.toString());
+            } catch (Exception exception) {
+                infoLogger.error("Caught exception" + exception.toString());
+            }
+        }
+        return null;
+    }
+
     public void click(String xpath) {
         Objects.requireNonNull(getElement(xpath)).click();
     }
 
     public void sendKeys(String xpath, String value) {
         Objects.requireNonNull(getElement(xpath)).sendKeys(value);
+    }
+
+    public void sendKeysByCSS(String CSS, String value){
+        Objects.requireNonNull(getElementByCSS(CSS)).sendKeys(value);
     }
 
     public void switchToNextTab() {
@@ -63,6 +85,23 @@ public abstract class RemoteSingletonDriver {
         }
     }
 
+    public void checkElementIsPresent(String xpath) {
+        Assert.assertNotNull(getElement(xpath));
+    }
+
+    public void waitText(String xpath, String text) {
+        wait.until(ExpectedConditions.textToBe(By.xpath(xpath), text));
+    }
+
+    public void checkElementText(String xpath, String expectedValue){
+        String actualValue = Objects.requireNonNull(getElement(xpath)).getText();
+        Assert.assertEquals(actualValue, expectedValue);
+    }
+
+    public void checkElementValue(String xpath, String expectedValue){
+        String actualValue = Objects.requireNonNull(getElement(xpath)).getAttribute("value");
+        Assert.assertEquals(actualValue, expectedValue);
+    }
     public void close() {
         remoteWebDriver.quit();
     }
