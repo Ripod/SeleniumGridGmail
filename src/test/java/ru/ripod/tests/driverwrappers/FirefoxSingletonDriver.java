@@ -1,5 +1,6 @@
 package ru.ripod.tests.driverwrappers;
 
+import org.apache.logging.log4j.LogManager;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -14,6 +15,10 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Синглтон обертка для FirefoxDriver-а
+ */
+
 public class FirefoxSingletonDriver extends RemoteSingletonDriver {
 
     private static FirefoxSingletonDriver firefoxSingletonDriver;
@@ -26,6 +31,7 @@ public class FirefoxSingletonDriver extends RemoteSingletonDriver {
     }
 
     private FirefoxSingletonDriver() {
+        infoLogger = LogManager.getLogger("firefox");
         try {
             InputStream propInputStream = new FileInputStream("selenium.config");
             properties.load(propInputStream);
@@ -36,7 +42,6 @@ public class FirefoxSingletonDriver extends RemoteSingletonDriver {
         boolean remoteFlag = Boolean.valueOf(properties.getProperty("remote", "false"));
         if (remoteFlag) {
             DesiredCapabilities capabilities = new DesiredCapabilities();
-//            capabilities.setPlatform(Platform.WIN10);
             capabilities.setBrowserName("firefox");
             String baseUrl = properties.getProperty("wdhost", "127.0.0.1");
             String port = properties.getProperty("wdport", "4444");

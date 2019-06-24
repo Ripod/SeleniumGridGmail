@@ -3,3 +3,5 @@ IPRtaskproject.iml
 target/*
 bin/
 logs/
+credential.config
+allure-report/
