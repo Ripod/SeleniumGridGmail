@@ -1,11 +1,9 @@
 package ru.ripod.tests.driverwrappers;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -15,6 +13,9 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 
+/**
+ * Абстрактная синглтон обертка для WebDriver-а
+ */
 public abstract class RemoteSingletonDriver {
     protected RemoteWebDriver remoteWebDriver;
     protected WebDriverWait wait;
@@ -89,6 +90,11 @@ public abstract class RemoteSingletonDriver {
         Assert.assertNotNull(getElement(xpath));
     }
 
+    public void checkElementNotPresent(String xpath){
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(xpath)));
+        Assert.assertNull(getElement(xpath));
+    }
+
     public void waitText(String xpath, String text) {
         wait.until(ExpectedConditions.textToBe(By.xpath(xpath), text));
     }
@@ -102,6 +108,7 @@ public abstract class RemoteSingletonDriver {
         String actualValue = Objects.requireNonNull(getElement(xpath)).getAttribute("value");
         Assert.assertEquals(actualValue, expectedValue);
     }
+
     public void close() {
         remoteWebDriver.quit();
     }

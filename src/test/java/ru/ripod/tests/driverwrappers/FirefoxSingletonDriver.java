@@ -14,6 +14,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+
+/**
+ * Синглтон обертка для FirefoxDriver-а
+ */
+
 public class FirefoxSingletonDriver extends RemoteSingletonDriver {
 
     private static FirefoxSingletonDriver firefoxSingletonDriver;
@@ -37,7 +42,6 @@ public class FirefoxSingletonDriver extends RemoteSingletonDriver {
         boolean remoteFlag = Boolean.valueOf(properties.getProperty("remote", "false"));
         if (remoteFlag) {
             DesiredCapabilities capabilities = new DesiredCapabilities();
-//            capabilities.setPlatform(Platform.WIN10);
             capabilities.setBrowserName("firefox");
             String baseUrl = properties.getProperty("wdhost", "127.0.0.1");
             String port = properties.getProperty("wdport", "4444");

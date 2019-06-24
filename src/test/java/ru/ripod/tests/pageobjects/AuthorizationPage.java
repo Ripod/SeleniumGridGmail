@@ -2,7 +2,6 @@ package ru.ripod.tests.pageobjects;
 
 public class AuthorizationPage extends BasicPage{
 
-    private String loginFieldXpath = "//input[@id = 'identifierId']";
     private String loginFieldCSS = "input#identifierId";
     private String buttonXpath = "//span[text() = '%s']";
     private String passwordXpath = "//input[@name = 'password']";
@@ -26,5 +25,9 @@ public class AuthorizationPage extends BasicPage{
 
     public void inputPassword(String password){
         driver.sendKeysByCSS(passwordCSS, password);
+    }
+
+    public void checkSignedOut(){
+        driver.checkElementIsPresent(passwordXpath);
     }
 }

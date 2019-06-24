@@ -9,6 +9,7 @@ public class MailPage extends BasicPage {
     private String newLetterWindowCloseXpath = "//img[@aria-label='Сохранить и закрыть']";
     private String partPageXpath = "//a[@title='%s']";
     private String filledEmailFieldXpath = "//span[contains(@email,'@')][contains(text(),'@')]";
+    private String sendButtonXpath = "//div[text()='Отправить']";
 
     public MailPage(String browserName) {
         super(browserName);
@@ -58,4 +59,9 @@ public class MailPage extends BasicPage {
     public void checkBodyValue(String expectedValue){
         driver.checkElementText(bodyInputFieldXpath, expectedValue);
     }
+
+    public void pressSendButton(){
+        driver.click(sendButtonXpath);
+    }
+
 }

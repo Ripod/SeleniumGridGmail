@@ -15,6 +15,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Синглтон обертка для ChromeDriver-а
+ */
 public class ChromeSingletonDriver extends RemoteSingletonDriver{
 
     private static ChromeSingletonDriver chromeSingletonDriver;

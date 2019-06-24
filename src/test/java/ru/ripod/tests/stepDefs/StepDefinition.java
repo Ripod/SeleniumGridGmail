@@ -33,13 +33,14 @@ public class StepDefinition {
     private AuthorizationPage authorizationPage;
     private MailPage mailPage;
     private DraftPage draftPage;
+    private SentPage sentPage;
 
     public static void setUsedBrowser(String browserName) {
         usedBrowser.set(browserName);
     }
 
     /**
-     * Инициализация браузера и базовой страницы
+     * Инициализация браузера и страничных объектов
      */
     @Before
     public void browserInit() {
@@ -48,6 +49,7 @@ public class StepDefinition {
         authorizationPage = new AuthorizationPage(usedBrowser.get());
         mailPage = new MailPage(usedBrowser.get());
         draftPage = new DraftPage(usedBrowser.get());
+        sentPage = new SentPage(usedBrowser.get());
         logger = LogManager.getLogger(usedBrowser.get());
     }
 
@@ -58,10 +60,6 @@ public class StepDefinition {
     }
 
 
-    @After
-    public void closeBrowser() {
-        basicPage.closeBrowser();
-    }
 
     @И("нажимаем кнопку {string} на главной странице")
     public void pressMailButtonSearchPage(String buttonName) {
@@ -193,4 +191,42 @@ public class StepDefinition {
     public void checkMailText() {
         mailPage.checkBodyValue(mailBody.get());
     }
+
+    @Когда("нажимаем кнопку \"Отправить\" в окне нового письма")
+    public void pressSendInMailWindow() {
+        mailPage.pressSendButton();
+    }
+
+    @Тогда("в списке черновиков не содержится созданный нами черновик")
+    public void checkDraftNotShown() {
+        draftPage.checkCreatedDraftNotVisible(mailTheme.get());
+    }
+
+    @Тогда("в списке писем содержится отправленное нами письмо")
+    public void checkSentLetterIsShown() {
+        sentPage.checkSentMailIsVisible(mailTheme.get());
+    }
+
+
+
+    @Когда("нажимаем на кнопку аккаунта и нажимаем \"Выйти\"")
+    public void pressSignOutButton() {
+        searchPage.pressSignOutButton();
+    }
+
+    @Тогда("выходим из аккаунта")
+    public void checkSignedOut() {
+        authorizationPage.checkSignedOut();
+    }
+
+    @After
+    public void closeBrowser() {
+        try {
+            Thread.sleep(20000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        basicPage.closeBrowser();
+    }
+
 }

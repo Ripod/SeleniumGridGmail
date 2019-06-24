@@ -11,6 +11,9 @@ public class DraftPage extends BasicPage {
         driver.checkElementIsPresent(String.format(createdDraftXpath, draftTheme));
     }
 
+    public void checkCreatedDraftNotVisible(String draftTheme){
+        driver.checkElementNotPresent(String.format(createdDraftXpath, draftTheme));
+    }
     public void openCreatedDraft(String draftTheme){
         driver.click(String.format(createdDraftXpath, draftTheme));
     }

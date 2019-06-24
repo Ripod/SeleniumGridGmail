@@ -1,7 +1,6 @@
 package ru.ripod.tests.pageobjects;
 
-import cucumber.api.java.Before;
-import org.testng.annotations.Test;
+
 import ru.ripod.tests.driverwrappers.ChromeSingletonDriver;
 import ru.ripod.tests.driverwrappers.FirefoxSingletonDriver;
 import ru.ripod.tests.driverwrappers.RemoteSingletonDriver;
