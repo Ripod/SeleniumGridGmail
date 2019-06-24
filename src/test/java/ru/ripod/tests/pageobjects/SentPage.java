@@ -8,7 +8,7 @@ public class SentPage extends BasicPage {
         super(browserName);
     }
 
-    public void checkSentMailIsVisible(String mailTheme){
+    public void checkSentMailIsVisible(String mailTheme) {
         driver.checkElementIsPresent(String.format(sentMailXpath, mailTheme));
     }
 }

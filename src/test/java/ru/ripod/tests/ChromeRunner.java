@@ -1,7 +1,6 @@
 package ru.ripod.tests;
 
 import cucumber.api.CucumberOptions;
-import cucumber.api.java.Before;
 import cucumber.api.testng.AbstractTestNGCucumberTests;
 import org.testng.annotations.BeforeTest;
 import ru.ripod.tests.stepDefs.StepDefinition;
@@ -16,7 +15,7 @@ import ru.ripod.tests.stepDefs.StepDefinition;
 public class ChromeRunner extends AbstractTestNGCucumberTests {
 
     @BeforeTest
-    public void setup(){
+    public void setup() {
         StepDefinition.setUsedBrowser("chrome");
     }
 }

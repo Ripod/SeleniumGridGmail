@@ -9,23 +9,23 @@ public class BasicPage {
 
     protected RemoteSingletonDriver driver;
 
-    public BasicPage(String browserName){
-        switch (browserName){
-            case("chrome"):
+    public BasicPage(String browserName) {
+        switch (browserName) {
+            case ("chrome"):
                 driver = ChromeSingletonDriver.getInstance();
                 break;
-            case("firefox"):
+            case ("firefox"):
                 driver = FirefoxSingletonDriver.getInstance();
                 break;
         }
     }
 
-    public void openPage(String url){
+    public void openPage(String url) {
         driver.openPage(url);
     }
 
 
-    public void closeBrowser(){
+    public void closeBrowser() {
         driver.close();
     }
 

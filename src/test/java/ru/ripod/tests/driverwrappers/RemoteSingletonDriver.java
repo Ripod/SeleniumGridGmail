@@ -3,6 +3,7 @@ package ru.ripod.tests.driverwrappers;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -69,7 +70,7 @@ public abstract class RemoteSingletonDriver {
         Objects.requireNonNull(getElement(xpath)).sendKeys(value);
     }
 
-    public void sendKeysByCSS(String CSS, String value){
+    public void sendKeysByCSS(String CSS, String value) {
         Objects.requireNonNull(getElementByCSS(CSS)).sendKeys(value);
     }
 
@@ -90,21 +91,24 @@ public abstract class RemoteSingletonDriver {
         Assert.assertNotNull(getElement(xpath));
     }
 
-    public void checkElementNotPresent(String xpath){
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(xpath)));
-        Assert.assertNull(getElement(xpath));
+    public void checkElementNotPresent(String xpath) {
+        try {
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(xpath)));
+        } catch (TimeoutException exception) {
+            Assert.fail("Элемент по локатору xpath виден", exception);
+        }
     }
 
     public void waitText(String xpath, String text) {
         wait.until(ExpectedConditions.textToBe(By.xpath(xpath), text));
     }
 
-    public void checkElementText(String xpath, String expectedValue){
+    public void checkElementText(String xpath, String expectedValue) {
         String actualValue = Objects.requireNonNull(getElement(xpath)).getText();
         Assert.assertEquals(actualValue, expectedValue);
     }
 
-    public void checkElementValue(String xpath, String expectedValue){
+    public void checkElementValue(String xpath, String expectedValue) {
         String actualValue = Objects.requireNonNull(getElement(xpath)).getAttribute("value");
         Assert.assertEquals(actualValue, expectedValue);
     }

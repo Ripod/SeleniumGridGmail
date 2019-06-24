@@ -10,58 +10,65 @@ public class MailPage extends BasicPage {
     private String partPageXpath = "//a[@title='%s']";
     private String filledEmailFieldXpath = "//span[contains(@email,'@')][contains(text(),'@')]";
     private String sendButtonXpath = "//div[text()='Отправить']";
+    private String accountButton = "//a[contains(@aria-label, 'Аккаунт Google:')]";
+    private String signOutButtonXpath = "//div[@aria-label='Информация об аккаунте']//a[text()='Выйти']";
 
     public MailPage(String browserName) {
         super(browserName);
     }
 
-    public void checkPageOpened(){
+    public void checkPageOpened() {
         driver.checkElementIsPresent(newLetterButtonXpath);
     }
 
-    public void pressCreateLetter(){
+    public void pressCreateLetter() {
         driver.click(newLetterButtonXpath);
     }
 
-    public void inputReceiverEmail(String email){
+    public void inputReceiverEmail(String email) {
         driver.sendKeys(receiverEmailFieldXpath, email);
     }
 
-    public void inputMailTheme(String theme){
+    public void inputMailTheme(String theme) {
         driver.sendKeys(themeInputFieldXpath, theme);
     }
 
-    public void inputMailBody(String body){
+    public void inputMailBody(String body) {
         driver.sendKeys(bodyInputFieldXpath, body);
     }
 
-    public void closeWhenDraftSaved(){
+    public void closeWhenDraftSaved() {
         driver.waitText(newLetterWindowTitleXpath, "Черновик сохранен");
         driver.click(newLetterWindowCloseXpath);
     }
 
-    public void openMailsPagePart(String partName){
-        driver.click(String.format(partPageXpath,partName));
+    public void openMailsPagePart(String partName) {
+        driver.click(String.format(partPageXpath, partName));
     }
 
-    public void checkLetterCreateEditIsOpened(){
+    public void checkLetterCreateEditIsOpened() {
         driver.checkElementIsPresent(newLetterWindowTitleXpath);
     }
 
-    public void checkEmailValue(String expectedValue){
+    public void checkEmailValue(String expectedValue) {
         driver.checkElementText(filledEmailFieldXpath, expectedValue);
     }
 
-    public void checkThemeValue(String expectedValue){
+    public void checkThemeValue(String expectedValue) {
         driver.checkElementValue(themeInputFieldXpath, expectedValue);
     }
 
-    public void checkBodyValue(String expectedValue){
+    public void checkBodyValue(String expectedValue) {
         driver.checkElementText(bodyInputFieldXpath, expectedValue);
     }
 
-    public void pressSendButton(){
+    public void pressSendButton() {
         driver.click(sendButtonXpath);
+    }
+
+    public void pressSignOutButton() {
+        driver.click(accountButton);
+        driver.click(signOutButtonXpath);
     }
 
 }

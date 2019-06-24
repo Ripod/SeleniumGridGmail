@@ -15,7 +15,7 @@ import ru.ripod.tests.stepDefs.StepDefinition;
 )
 public class FirefoxRunner extends AbstractTestNGCucumberTests {
     @BeforeTest
-    public void setup(){
+    public void setup() {
         StepDefinition.setUsedBrowser("firefox");
     }
 }

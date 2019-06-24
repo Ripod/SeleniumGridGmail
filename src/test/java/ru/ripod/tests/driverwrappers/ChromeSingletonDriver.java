@@ -18,18 +18,18 @@ import java.util.concurrent.TimeUnit;
 /**
  * Синглтон обертка для ChromeDriver-а
  */
-public class ChromeSingletonDriver extends RemoteSingletonDriver{
+public class ChromeSingletonDriver extends RemoteSingletonDriver {
 
     private static ChromeSingletonDriver chromeSingletonDriver;
 
-    public static ChromeSingletonDriver getInstance(){
-        if(chromeSingletonDriver == null){
+    public static ChromeSingletonDriver getInstance() {
+        if (chromeSingletonDriver == null) {
             chromeSingletonDriver = new ChromeSingletonDriver();
         }
         return chromeSingletonDriver;
     }
 
-    private ChromeSingletonDriver(){
+    private ChromeSingletonDriver() {
         infoLogger = LogManager.getLogger("chrome");
         try {
             InputStream propInputStream = new FileInputStream("selenium.config");
@@ -41,7 +41,6 @@ public class ChromeSingletonDriver extends RemoteSingletonDriver{
         boolean remoteFlag = Boolean.valueOf(properties.getProperty("remote", "false"));
         if (remoteFlag) {
             DesiredCapabilities capabilities = new DesiredCapabilities();
-//            capabilities.setPlatform(Platform.WIN10);
             capabilities.setBrowserName("chrome");
             String baseUrl = properties.getProperty("wdhost", "127.0.0.1");
             String port = properties.getProperty("wdport", "4444");
@@ -59,7 +58,6 @@ public class ChromeSingletonDriver extends RemoteSingletonDriver{
         remoteWebDriver.manage().window().maximize();
         wait = new WebDriverWait(remoteWebDriver, 5, 250);
     }
-
 
 
 }

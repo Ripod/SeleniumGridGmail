@@ -60,7 +60,6 @@ public class StepDefinition {
     }
 
 
-
     @И("нажимаем кнопку {string} на главной странице")
     public void pressMailButtonSearchPage(String buttonName) {
         searchPage.clickHeaderButton(buttonName);
@@ -208,10 +207,9 @@ public class StepDefinition {
     }
 
 
-
     @Когда("нажимаем на кнопку аккаунта и нажимаем \"Выйти\"")
     public void pressSignOutButton() {
-        searchPage.pressSignOutButton();
+        mailPage.pressSignOutButton();
     }
 
     @Тогда("выходим из аккаунта")
@@ -221,11 +219,6 @@ public class StepDefinition {
 
     @After
     public void closeBrowser() {
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         basicPage.closeBrowser();
     }
 
