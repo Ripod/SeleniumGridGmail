@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Suite1" verbose="1" parallel="tests" thread-count="2">
+<suite name="Создание и отправка черновика в Google почте" verbose="1" parallel="tests" thread-count="2">
     <test name="firefox">
         <classes>
             <class name="ru.ripod.tests.FirefoxRunner"/>
