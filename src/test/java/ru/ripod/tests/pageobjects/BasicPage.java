@@ -24,6 +24,9 @@ public class BasicPage {
         driver.openPage(url);
     }
 
+    public byte[] takeScreenshot(){
+        return driver.takeScreenshot();
+    }
 
     public void closeBrowser() {
         driver.close();
