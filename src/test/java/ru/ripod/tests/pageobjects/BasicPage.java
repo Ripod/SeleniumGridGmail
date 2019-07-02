@@ -26,7 +26,7 @@ public class BasicPage {
         driver.openPage(url);
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     @Attachment
     public byte[] takeScreenshot(){
         return driver.takeScreenshot();
