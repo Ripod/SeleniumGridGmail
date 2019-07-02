@@ -1,10 +1,7 @@
 package ru.ripod.tests.driverwrappers;
 
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.By;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -113,6 +110,9 @@ public abstract class RemoteSingletonDriver {
         Assert.assertEquals(actualValue, expectedValue);
     }
 
+    public byte[] takeScreenshot(){
+        return remoteWebDriver.getScreenshotAs(OutputType.BYTES);
+    }
     public void close() {
         remoteWebDriver.quit();
     }

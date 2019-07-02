@@ -2,9 +2,11 @@ package ru.ripod.tests.stepDefs;
 
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
+import cucumber.api.java.BeforeStep;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
 import cucumber.api.java.ru.Тогда;
+import io.qameta.allure.Attachment;
 import io.qameta.allure.Step;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,6 +42,7 @@ public class StepDefinition {
         usedBrowser.set(browserName);
     }
 
+
     /**
      * Инициализация браузера и страничных объектов
      */
@@ -55,11 +58,14 @@ public class StepDefinition {
         logger = LogManager.getLogger(usedBrowser.get());
     }
 
-    @Step("ОТкрытие страницы {0}")
+    @Step("Открытие страницы {0}")
+    @Attachment
     @Когда("открываем страницу {string} в браузере")
-    public void openPageInBrowser(String url) {
+    public byte[] openPageInBrowser(String url) {
         basicPage.openPage(url);
+        byte[] screenshot = basicPage.takeScreenshot();
         logger.info("Открыта страница " + url);
+        return  screenshot;
     }
 
     @Step("Нажатие кнопки {0} на главной странице")
