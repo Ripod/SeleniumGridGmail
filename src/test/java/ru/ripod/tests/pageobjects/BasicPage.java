@@ -1,6 +1,8 @@
 package ru.ripod.tests.pageobjects;
 
 
+import io.qameta.allure.Attachment;
+import org.testng.annotations.AfterMethod;
 import ru.ripod.tests.driverwrappers.ChromeSingletonDriver;
 import ru.ripod.tests.driverwrappers.FirefoxSingletonDriver;
 import ru.ripod.tests.driverwrappers.RemoteSingletonDriver;
@@ -24,6 +26,8 @@ public class BasicPage {
         driver.openPage(url);
     }
 
+    @AfterMethod
+    @Attachment
     public byte[] takeScreenshot(){
         return driver.takeScreenshot();
     }
