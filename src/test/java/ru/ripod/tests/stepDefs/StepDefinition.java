@@ -58,14 +58,12 @@ public class StepDefinition {
         logger = LogManager.getLogger(usedBrowser.get());
     }
 
-    @Step("Открытие страницы {0}")
-    @Attachment
+    @Step(value = "Открытие страницы {0}")
     @Когда("открываем страницу {string} в браузере")
-    public byte[] openPageInBrowser(String url) {
+    public void openPageInBrowser(String url) {
         basicPage.openPage(url);
         byte[] screenshot = basicPage.takeScreenshot();
         logger.info("Открыта страница " + url);
-        return  screenshot;
     }
 
     @Step("Нажатие кнопки {0} на главной странице")
