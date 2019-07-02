@@ -1,5 +1,8 @@
 package ru.ripod.tests.pageobjects;
 
+import io.qameta.allure.Attachment;
+import org.testng.annotations.AfterMethod;
+
 public class MailPage extends BasicPage {
     private String newLetterButtonXpath = "//div[@role='button'][text()='Написать']";
     private String receiverEmailFieldXpath = "//textarea[@aria-label='Кому']";
@@ -12,6 +15,12 @@ public class MailPage extends BasicPage {
     private String sendButtonXpath = "//div[text()='Отправить']";
     private String accountButton = "//a[contains(@aria-label, 'Аккаунт Google:')]";
     private String signOutButtonXpath = "//div[@aria-label='Информация об аккаунте']//a[text()='Выйти']";
+
+    @AfterMethod(alwaysRun = true)
+    @Attachment
+    public byte[] takeScreenshot(){
+        return driver.takeScreenshot();
+    }
 
     public MailPage(String browserName) {
         super(browserName);

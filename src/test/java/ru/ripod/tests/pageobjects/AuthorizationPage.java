@@ -1,11 +1,20 @@
 package ru.ripod.tests.pageobjects;
 
+import io.qameta.allure.Attachment;
+import org.testng.annotations.AfterMethod;
+
 public class AuthorizationPage extends BasicPage {
 
     private String loginFieldCSS = "input#identifierId";
     private String buttonXpath = "//span[text() = '%s']";
     private String passwordXpath = "//input[@name = 'password']";
     String passwordCSS = "input[name = 'password']";
+
+    @AfterMethod(alwaysRun = true)
+    @Attachment
+    public byte[] takeScreenshot(){
+        return driver.takeScreenshot();
+    }
 
     public AuthorizationPage(String browserName) {
         super(browserName);
