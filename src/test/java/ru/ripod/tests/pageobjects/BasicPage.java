@@ -3,10 +3,11 @@ package ru.ripod.tests.pageobjects;
 
 import io.qameta.allure.Attachment;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
 import ru.ripod.tests.driverwrappers.ChromeSingletonDriver;
 import ru.ripod.tests.driverwrappers.FirefoxSingletonDriver;
 import ru.ripod.tests.driverwrappers.RemoteSingletonDriver;
-
+@Test
 public class BasicPage {
 
     protected RemoteSingletonDriver driver;

@@ -4,7 +4,7 @@ import io.qameta.allure.Attachment;
 import org.testng.annotations.AfterMethod;
 
 public class MailPage extends BasicPage {
-    private String newLetterButtonXpath = "//div[@role='button'][text()='Написать']";
+    private String newLetterButtonXpath = "//div[@role='button'][@gh='cm']";
     private String receiverEmailFieldXpath = "//textarea[@aria-label='Кому']";
     private String themeInputFieldXpath = "//input[@aria-label='Тема']";
     private String bodyInputFieldXpath = "//div[@aria-label='Тело письма']";
@@ -16,11 +16,6 @@ public class MailPage extends BasicPage {
     private String accountButton = "//a[contains(@aria-label, 'Аккаунт Google:')]";
     private String signOutButtonXpath = "//div[@aria-label='Информация об аккаунте']//a[text()='Выйти']";
 
-    @AfterMethod(alwaysRun = true)
-    @Attachment
-    public byte[] takeScreenshot(){
-        return driver.takeScreenshot();
-    }
 
     public MailPage(String browserName) {
         super(browserName);

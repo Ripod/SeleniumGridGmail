@@ -8,12 +8,6 @@ public class SearchPage extends BasicPage {
     private String headerButtonXpath = "//div[@id='gb']//a[text()='%s']";
     private String signInXpath = "//ul[@class = 'h-c-header__cta-list header__nav--ltr']//a[contains(text(),'Sign in')]";
 
-    @AfterMethod(alwaysRun = true)
-    @Attachment
-    public byte[] takeScreenshot(){
-        return driver.takeScreenshot();
-    }
-
     public SearchPage(String browserName) {
         super(browserName);
     }

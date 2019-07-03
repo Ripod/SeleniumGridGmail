@@ -6,12 +6,6 @@ import org.testng.annotations.AfterMethod;
 public class DraftPage extends BasicPage {
     String createdDraftXpath = "//tr//span[@class = 'bog']/span[text() = '%s']";
 
-    @AfterMethod(alwaysRun = true)
-    @Attachment
-    public byte[] takeScreenshot(){
-        return driver.takeScreenshot();
-    }
-
     public DraftPage(String browserName) {
         super(browserName);
     }

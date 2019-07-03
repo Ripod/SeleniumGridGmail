@@ -10,12 +10,6 @@ public class AuthorizationPage extends BasicPage {
     private String passwordXpath = "//input[@name = 'password']";
     String passwordCSS = "input[name = 'password']";
 
-    @AfterMethod(alwaysRun = true)
-    @Attachment
-    public byte[] takeScreenshot(){
-        return driver.takeScreenshot();
-    }
-
     public AuthorizationPage(String browserName) {
         super(browserName);
     }

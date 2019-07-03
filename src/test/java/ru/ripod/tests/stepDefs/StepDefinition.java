@@ -62,7 +62,6 @@ public class StepDefinition {
     @Когда("открываем страницу {string} в браузере")
     public void openPageInBrowser(String url) {
         basicPage.openPage(url);
-        byte[] screenshot = basicPage.takeScreenshot();
         logger.info("Открыта страница " + url);
     }
 
