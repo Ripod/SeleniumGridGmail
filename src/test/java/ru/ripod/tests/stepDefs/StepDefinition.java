@@ -2,11 +2,9 @@ package ru.ripod.tests.stepDefs;
 
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
-import cucumber.api.java.BeforeStep;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
 import cucumber.api.java.ru.Тогда;
-import io.qameta.allure.Attachment;
 import io.qameta.allure.Step;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +13,6 @@ import ru.ripod.tests.pageobjects.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -23,7 +20,7 @@ import java.util.Properties;
 
 
 public class StepDefinition {
-    //thread locals for variables used throughout while test
+    //thread locals for variables used throughout whole test
     private static ThreadLocal<String> usedBrowser = new ThreadLocal<>();
     private static ThreadLocal<String> mailDate = new ThreadLocal<>();
     private static ThreadLocal<String> mailTheme = new ThreadLocal<>();
