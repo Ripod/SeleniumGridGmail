@@ -1,20 +1,44 @@
 package ru.ripod.tests.pageobjects;
 
+import io.qameta.allure.Attachment;
+import org.testng.annotations.AfterMethod;
+
+import java.util.HashMap;
+
 public class MailPage extends BasicPage {
-    private String newLetterButtonXpath = "//div[@role='button'][text()='Написать']";
-    private String receiverEmailFieldXpath = "//textarea[@aria-label='Кому']";
-    private String themeInputFieldXpath = "//input[@aria-label='Тема']";
-    private String bodyInputFieldXpath = "//div[@aria-label='Тело письма']";
-    private String newLetterWindowTitleXpath = "//h2//div[text()='Написать:']//following-sibling::div";
-    private String newLetterWindowCloseXpath = "//img[@aria-label='Сохранить и закрыть']";
+    private String newLetterButtonXpath = "//div[@role='button'][@gh='cm']";
+    private String receiverEmailFieldXpath = "//textarea[@name='to']";
+    private String themeInputFieldXpath = "//input[@name='subjectbox']";
+    private String bodyInputFieldXpath = "//div[@role = 'textbox']";
+    private String newLetterWindowTitleRuXpath = "//h2//div[text()='Написать:']//following-sibling::div";
+    private String newLetterWindowTitleEnXpath = "//h2//div[text()='Compose:']//following-sibling::div";
+    private String newLetterWindowCloseRuXpath = "//img[@aria-label='Сохранить и закрыть']";
+    private String newLetterWindowCloseEnXpath = "//img[@aria-label='Save & close']";
     private String partPageXpath = "//a[@title='%s']";
     private String filledEmailFieldXpath = "//span[contains(@email,'@')][contains(text(),'@')]";
-    private String sendButtonXpath = "//div[text()='Отправить']";
+    private String sendButtonRuXpath = "//div[text()='Отправить']";
+    private String sendButtonEnXpath = "//div[text()='Send']";
     private String accountButton = "//a[contains(@aria-label, 'Аккаунт Google:')]";
     private String signOutButtonXpath = "//div[@aria-label='Информация об аккаунте']//a[text()='Выйти']";
 
+
     public MailPage(String browserName) {
         super(browserName);
+        elements = new HashMap<>();
+        switch (locale){
+            case ("ru"):
+                elements.put("Заголовок", newLetterWindowTitleRuXpath);
+                elements.put("Закрыть", newLetterWindowCloseRuXpath);
+                elements.put("Отправить", sendButtonRuXpath);
+                elements.put("Сохранение", "Черновик сохранен");
+                break;
+            case ("en"):
+                elements.put("Заголовок", newLetterWindowTitleEnXpath);
+                elements.put("Закрыть", newLetterWindowCloseEnXpath);
+                elements.put("Отправить", sendButtonEnXpath);
+                elements.put("Сохранение", "Draft saved");
+                break;
+        }
     }
 
     public void checkPageOpened() {
@@ -38,8 +62,8 @@ public class MailPage extends BasicPage {
     }
 
     public void closeWhenDraftSaved() {
-        driver.waitText(newLetterWindowTitleXpath, "Черновик сохранен");
-        driver.click(newLetterWindowCloseXpath);
+        driver.waitText(elements.get("Заголовок"), elements.get(""));
+        driver.click(elements.get("Закрыть"));
     }
 
     public void openMailsPagePart(String partName) {
@@ -47,7 +71,7 @@ public class MailPage extends BasicPage {
     }
 
     public void checkLetterCreateEditIsOpened() {
-        driver.checkElementIsPresent(newLetterWindowTitleXpath);
+        driver.checkElementIsPresent(elements.get("Заголовок"));
     }
 
     public void checkEmailValue(String expectedValue) {
@@ -63,7 +87,7 @@ public class MailPage extends BasicPage {
     }
 
     public void pressSendButton() {
-        driver.click(sendButtonXpath);
+        driver.click(elements.get("Отправить"));
     }
 
     public void pressSignOutButton() {
