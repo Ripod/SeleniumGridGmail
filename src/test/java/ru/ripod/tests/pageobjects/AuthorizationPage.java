@@ -42,6 +42,7 @@ public class AuthorizationPage extends BasicPage {
     }
 
     public void inputPassword(String password) {
+        driver.click(passwordXpath);
         driver.sendKeysByCSS(passwordCSS, password);
     }
 
