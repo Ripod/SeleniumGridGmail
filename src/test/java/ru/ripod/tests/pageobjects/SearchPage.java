@@ -3,6 +3,8 @@ package ru.ripod.tests.pageobjects;
 import io.qameta.allure.Attachment;
 import org.testng.annotations.AfterMethod;
 
+import java.util.HashMap;
+
 public class SearchPage extends BasicPage {
 
     private String headerButtonRuXpath = "//div[@id='gb']//a[text()='Почта']";
@@ -11,6 +13,7 @@ public class SearchPage extends BasicPage {
 
     public SearchPage(String browserName) {
         super(browserName);
+        elements = new HashMap<>();
         switch (locale){
             case ("ru"):
                 elements.put("Почта", headerButtonRuXpath);

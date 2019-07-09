@@ -3,6 +3,8 @@ package ru.ripod.tests.pageobjects;
 import io.qameta.allure.Attachment;
 import org.testng.annotations.AfterMethod;
 
+import java.util.HashMap;
+
 public class MailPage extends BasicPage {
     private String newLetterButtonXpath = "//div[@role='button'][@gh='cm']";
     private String receiverEmailFieldXpath = "//textarea[@name='to']";
@@ -22,6 +24,7 @@ public class MailPage extends BasicPage {
 
     public MailPage(String browserName) {
         super(browserName);
+        elements = new HashMap<>();
         switch (locale){
             case ("ru"):
                 elements.put("Заголовок", newLetterWindowTitleRuXpath);
