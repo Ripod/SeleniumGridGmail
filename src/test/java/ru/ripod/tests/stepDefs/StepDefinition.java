@@ -91,7 +91,7 @@ public class StepDefinition {
             logger.warn("Problem reading properties file");
         }
         String login = credProperties.getProperty(usedBrowser.get() + "login");
-        authorizationPage.switchToNextTab();
+//        authorizationPage.switchToNextTab();
         authorizationPage.inputLogin(login);
         takeScreenshot();
     }
