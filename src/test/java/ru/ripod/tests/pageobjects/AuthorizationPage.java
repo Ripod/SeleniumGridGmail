@@ -1,10 +1,7 @@
 package ru.ripod.tests.pageobjects;
 
-import io.qameta.allure.Attachment;
-import org.testng.annotations.AfterMethod;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class AuthorizationPage extends BasicPage {
 

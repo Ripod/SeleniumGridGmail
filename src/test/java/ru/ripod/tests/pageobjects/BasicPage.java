@@ -4,8 +4,6 @@ package ru.ripod.tests.pageobjects;
 import io.qameta.allure.Attachment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Test;
 import ru.ripod.tests.driverwrappers.ChromeSingletonDriver;
 import ru.ripod.tests.driverwrappers.FirefoxSingletonDriver;
 import ru.ripod.tests.driverwrappers.RemoteSingletonDriver;
@@ -16,7 +14,6 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 
-@Test
 public class BasicPage {
     private Logger logger;
 
@@ -49,15 +46,12 @@ public class BasicPage {
         driver.openPage(url);
     }
 
-    @AfterMethod(alwaysRun = true)
-    @Attachment
-    public byte[] takeScreenshot(){
-        return driver.takeScreenshot();
-    }
-
     public void closeBrowser() {
         driver.close();
     }
 
-
+    @Attachment("Скриншот после шага")
+    public byte[] takeScreenshot(){
+        return driver.takeScreenshot();
+    }
 }

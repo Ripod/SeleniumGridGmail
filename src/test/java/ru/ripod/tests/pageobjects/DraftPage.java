@@ -1,8 +1,5 @@
 package ru.ripod.tests.pageobjects;
 
-import io.qameta.allure.Attachment;
-import org.testng.annotations.AfterMethod;
-
 public class DraftPage extends BasicPage {
     String createdDraftXpath = "//tr//span[@class = 'bog']/span[text() = '%s']";
 

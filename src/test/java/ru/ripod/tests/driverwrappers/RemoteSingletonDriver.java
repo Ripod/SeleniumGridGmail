@@ -74,7 +74,6 @@ public abstract class RemoteSingletonDriver {
     public void switchToNextTab() {
         wait.until(ExpectedConditions.numberOfWindowsToBe(2));
         Set<String> windows = remoteWebDriver.getWindowHandles();
-        infoLogger.info(windows.toString());
         for (String id :
                 windows) {
             if (!id.equals(remoteWebDriver.getWindowHandle())) {

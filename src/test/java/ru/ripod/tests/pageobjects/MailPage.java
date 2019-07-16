@@ -1,7 +1,5 @@
 package ru.ripod.tests.pageobjects;
 
-import io.qameta.allure.Attachment;
-import org.testng.annotations.AfterMethod;
 
 import java.util.HashMap;
 
@@ -25,18 +23,18 @@ public class MailPage extends BasicPage {
     public MailPage(String browserName) {
         super(browserName);
         elements = new HashMap<>();
-        switch (locale){
-            case ("ru"):
-                elements.put("Заголовок", newLetterWindowTitleRuXpath);
-                elements.put("Закрыть", newLetterWindowCloseRuXpath);
-                elements.put("Отправить", sendButtonRuXpath);
-                elements.put("Сохранение", "Черновик сохранен");
-                break;
+        switch (locale) {
             case ("en"):
                 elements.put("Заголовок", newLetterWindowTitleEnXpath);
                 elements.put("Закрыть", newLetterWindowCloseEnXpath);
                 elements.put("Отправить", sendButtonEnXpath);
                 elements.put("Сохранение", "Draft saved");
+                break;
+            default:
+                elements.put("Заголовок", newLetterWindowTitleRuXpath);
+                elements.put("Закрыть", newLetterWindowCloseRuXpath);
+                elements.put("Отправить", sendButtonRuXpath);
+                elements.put("Сохранение", "Черновик сохранен");
                 break;
         }
     }
@@ -62,7 +60,7 @@ public class MailPage extends BasicPage {
     }
 
     public void closeWhenDraftSaved() {
-        driver.waitText(elements.get("Заголовок"), elements.get(""));
+        driver.waitText(elements.get("Заголовок"), elements.get("Сохранение"));
         driver.click(elements.get("Закрыть"));
     }
 
