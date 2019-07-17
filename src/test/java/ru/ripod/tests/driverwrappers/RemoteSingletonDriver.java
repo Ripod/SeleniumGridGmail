@@ -25,30 +25,24 @@ public abstract class RemoteSingletonDriver {
 
     Logger infoLogger;
 
-    private WebElement getElement(String xpath) {
-        WebElement element = null;
-        for (int i = 0; i < 5; i++) {
-            try {
-                element = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
-                element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
-                element = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
-                return element;
-            } catch (StaleElementReferenceException e) {
-                infoLogger.error("Stale exception" + e.toString());
-            } catch (Exception exception) {
-                infoLogger.error("Caught exception" + exception.toString());
-            }
-        }
-        return null;
+
+    private WebElement getElementByXpath(String xpath) {
+        By xpathSelector = By.xpath(xpath);
+        return Objects.requireNonNull(elementReceiving(xpathSelector));
     }
 
     private WebElement getElementByCSS(String CSS) {
-        WebElement element = null;
+        By cssSelector = By.cssSelector(CSS);
+        return Objects.requireNonNull(elementReceiving(cssSelector));
+    }
+
+    private WebElement elementReceiving(By selector){
+        WebElement element ;
         for (int i = 0; i < 5; i++) {
             try {
-                element = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(CSS)));
-                element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(CSS)));
-                element = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(CSS)));
+                element = wait.until(ExpectedConditions.presenceOfElementLocated(selector));
+                element = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
+                element = wait.until(ExpectedConditions.elementToBeClickable(selector));
                 return element;
             } catch (StaleElementReferenceException e) {
                 infoLogger.error("Stale exception" + e.toString());
@@ -60,11 +54,11 @@ public abstract class RemoteSingletonDriver {
     }
 
     public void click(String xpath) {
-        Objects.requireNonNull(getElement(xpath)).click();
+        Objects.requireNonNull(getElementByXpath(xpath)).click();
     }
 
     public void sendKeys(String xpath, String value) {
-        Objects.requireNonNull(getElement(xpath)).sendKeys(value);
+        Objects.requireNonNull(getElementByXpath(xpath)).sendKeys(value);
     }
 
     public void sendKeysByCSS(String CSS, String value) {
@@ -84,7 +78,7 @@ public abstract class RemoteSingletonDriver {
     }
 
     public void checkElementIsPresent(String xpath) {
-        Assert.assertNotNull(getElement(xpath));
+        Assert.assertNotNull(getElementByXpath(xpath));
     }
 
     public void checkElementNotPresent(String xpath) {
@@ -100,12 +94,12 @@ public abstract class RemoteSingletonDriver {
     }
 
     public void checkElementText(String xpath, String expectedValue) {
-        String actualValue = Objects.requireNonNull(getElement(xpath)).getText();
+        String actualValue = Objects.requireNonNull(getElementByXpath(xpath)).getText();
         Assert.assertEquals(actualValue, expectedValue);
     }
 
     public void checkElementValue(String xpath, String expectedValue) {
-        String actualValue = Objects.requireNonNull(getElement(xpath)).getAttribute("value");
+        String actualValue = Objects.requireNonNull(getElementByXpath(xpath)).getAttribute("value");
         Assert.assertEquals(actualValue, expectedValue);
     }
 

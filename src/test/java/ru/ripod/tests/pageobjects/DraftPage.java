@@ -1,7 +1,7 @@
 package ru.ripod.tests.pageobjects;
 
 public class DraftPage extends BasicPage {
-    String createdDraftXpath = "//tr//span[@class = 'bog']/span[text() = '%s']";
+    private String createdDraftXpath = "//tr//span[@class = 'bog']/span[text() = '%s']";
 
     public DraftPage(String browserName) {
         super(browserName);
