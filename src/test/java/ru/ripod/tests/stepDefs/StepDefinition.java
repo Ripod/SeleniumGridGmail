@@ -26,6 +26,7 @@ public class StepDefinition {
     private static ThreadLocal<String> mailDate = new ThreadLocal<>();
     private static ThreadLocal<String> mailTheme = new ThreadLocal<>();
     private static ThreadLocal<String> mailBody = new ThreadLocal<>();
+    private static ThreadLocal<String> login = new ThreadLocal<>();
     private Logger logger;
 
     //page object declaration
@@ -92,9 +93,9 @@ public class StepDefinition {
         } catch (IOException e) {
             logger.warn("Problem reading properties file");
         }
-        String login = credProperties.getProperty(usedBrowser.get() + "login");
+        login.set(credProperties.getProperty(usedBrowser.get() + "login"));
         authorizationPage.switchToNextTab();
-        authorizationPage.inputLogin(login);
+        authorizationPage.inputLogin(login.get());
     }
 
     @Step("Нажатие кнопки \"{0}\" на странице авторизации")
@@ -244,7 +245,7 @@ public class StepDefinition {
     @Step("Проверка выхода из аккаунта")
     @Тогда("выходим из аккаунта")
     public void checkSignedOut() {
-        authorizationPage.checkSignedOut();
+        authorizationPage.checkSignedOut(login.get());
     }
 
     @Step("Закрытие браузера")
