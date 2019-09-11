@@ -11,11 +11,12 @@ public class AuthorizationPage extends BasicPage {
     private String passwordXpath = "//input[@name = 'password']";
     private String passwordCSS = "input[name = 'password']";
     private String continueButton = "//input[@id = 'submitChallenge']";
+    private String accountTileEmail = "//div[@id = 'profileIdentifier' and @data-email = '%s']";
 
     public AuthorizationPage(String browserName) {
         super(browserName);
         elements = new HashMap<>();
-        switch (locale){
+        switch (locale) {
             case ("ru"):
                 elements.put("Далее", nextButtonRuXpath);
                 break;
@@ -42,7 +43,7 @@ public class AuthorizationPage extends BasicPage {
         driver.sendKeysByCSS(passwordCSS, password);
     }
 
-    public void checkSignedOut() {
-        driver.checkElementIsPresent(passwordXpath);
+    public void checkSignedOut(String email) {
+        driver.checkElementIsPresent(String.format(accountTileEmail, email));
     }
 }
