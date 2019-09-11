@@ -1,22 +1,33 @@
 package ru.ripod.tests.driverwrappers;
 
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Абстрактная синглтон обертка для WebDriver-а
  */
-public abstract class RemoteSingletonDriver {
-    protected RemoteWebDriver remoteWebDriver;
-    protected WebDriverWait wait;
+public class RemoteSingletonDriver {
+    private RemoteWebDriver remoteWebDriver;
+    private static ThreadLocal<RemoteSingletonDriver> remoteSingletonDriver = new ThreadLocal<>();
+    private WebDriverWait wait;
     Properties properties = new Properties();
 
     public void openPage(String url) {
@@ -25,6 +36,49 @@ public abstract class RemoteSingletonDriver {
 
     Logger infoLogger;
 
+    public static RemoteSingletonDriver getInstance(String browserName) {
+        if (remoteSingletonDriver.get() == null) {
+            remoteSingletonDriver.set(new RemoteSingletonDriver(browserName));
+        }
+        return remoteSingletonDriver.get();
+    }
+
+    private RemoteSingletonDriver(String browserName) {
+        infoLogger = LogManager.getLogger(browserName);
+        try {
+            InputStream propInputStream = new FileInputStream("selenium.config");
+            properties.load(propInputStream);
+        } catch (IOException e) {
+            infoLogger.warn("Problem reading properties file");
+        }
+        System.setProperty("webdriver.chrome.driver", properties.getProperty("webdriver.chrome.driver", "bin/chromedriver.exe"));
+        System.setProperty("webdriver.gecko.driver", properties.getProperty("webdriver.gecko.driver", "bin/geckodriver.exe"));
+        boolean remoteFlag = Boolean.valueOf(properties.getProperty("remote", "false"));
+        if (remoteFlag) {
+            DesiredCapabilities capabilities = new DesiredCapabilities();
+            capabilities.setBrowserName(browserName);
+            String baseUrl = properties.getProperty("wdhost", "127.0.0.1");
+            String port = properties.getProperty("wdport", "4444");
+            String fullURL = String.format("http://%s:%s/wd/hub", baseUrl, port);
+            try {
+                remoteWebDriver = new RemoteWebDriver(new URL(fullURL), capabilities);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                infoLogger.error("wrong URL format");
+            }
+        } else {
+            switch (browserName) {
+                case "firefox":
+                    remoteWebDriver = new FirefoxDriver();
+                case "chrome":
+                default:
+                    remoteWebDriver = new ChromeDriver();
+            }
+        }
+        remoteWebDriver.manage().window().maximize();
+        remoteWebDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        wait = new WebDriverWait(remoteWebDriver, 5, 250);
+    }
 
     private WebElement getElementByXpath(String xpath) {
         By xpathSelector = By.xpath(xpath);
@@ -36,8 +90,8 @@ public abstract class RemoteSingletonDriver {
         return Objects.requireNonNull(elementReceiving(cssSelector));
     }
 
-    private WebElement elementReceiving(By selector){
-        WebElement element ;
+    private WebElement elementReceiving(By selector) {
+        WebElement element;
         for (int i = 0; i < 5; i++) {
             try {
                 element = wait.until(ExpectedConditions.presenceOfElementLocated(selector));
@@ -45,9 +99,9 @@ public abstract class RemoteSingletonDriver {
                 element = wait.until(ExpectedConditions.elementToBeClickable(selector));
                 return element;
             } catch (StaleElementReferenceException e) {
-                infoLogger.error("Stale exception" + e.toString());
+                infoLogger.info("Stale exception", e);
             } catch (Exception exception) {
-                infoLogger.error("Caught exception" + exception.toString());
+                infoLogger.info("Caught exception", exception);
             }
         }
         return null;
@@ -68,13 +122,9 @@ public abstract class RemoteSingletonDriver {
     public void switchToNextTab() {
         wait.until(ExpectedConditions.numberOfWindowsToBe(2));
         Set<String> windows = remoteWebDriver.getWindowHandles();
-        for (String id :
-                windows) {
-            if (!id.equals(remoteWebDriver.getWindowHandle())) {
-                remoteWebDriver.switchTo().window(id);
-                break;
-            }
-        }
+        windows.stream().filter(o -> !o.equals(remoteWebDriver.getWindowHandle()))
+                .findFirst().map(o -> remoteWebDriver.switchTo().window(o));
+
     }
 
     public void checkElementIsPresent(String xpath) {
@@ -103,9 +153,10 @@ public abstract class RemoteSingletonDriver {
         Assert.assertEquals(actualValue, expectedValue);
     }
 
-    public byte[] takeScreenshot(){
+    public byte[] takeScreenshot() {
         return remoteWebDriver.getScreenshotAs(OutputType.BYTES);
     }
+
     public void close() {
         remoteWebDriver.quit();
     }

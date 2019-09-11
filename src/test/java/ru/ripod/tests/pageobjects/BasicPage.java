@@ -4,8 +4,6 @@ package ru.ripod.tests.pageobjects;
 import io.qameta.allure.Attachment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.ripod.tests.driverwrappers.ChromeSingletonDriver;
-import ru.ripod.tests.driverwrappers.FirefoxSingletonDriver;
 import ru.ripod.tests.driverwrappers.RemoteSingletonDriver;
 
 import java.io.FileInputStream;
@@ -23,14 +21,7 @@ public class BasicPage {
 
 
     public BasicPage(String browserName) {
-        switch (browserName) {
-            case ("chrome"):
-                driver = ChromeSingletonDriver.getInstance();
-                break;
-            case ("firefox"):
-                driver = FirefoxSingletonDriver.getInstance();
-                break;
-        }
+        driver = RemoteSingletonDriver.getInstance(browserName);
         logger = LogManager.getLogger(browserName);
         Properties credProperties = new Properties();
         try {
