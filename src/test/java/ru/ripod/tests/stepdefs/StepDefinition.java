@@ -109,10 +109,10 @@ public class StepDefinition {
         searchPage.clickHeaderButton(buttonName);
     }
 
-    @Step("Нажатие кнопки \"Войти\"")
-    @И("нажимаем кнопку \"Войти\"")
-    public void clickSignInButton() {
-        searchPage.clickSignInButton();
+    @Step("Нажатие кнопки {0}")
+    @И("нажимаем кнопку {string}")
+    public void clickSignInButton( String buttonName) {
+        searchPage.clickSignInButton(buttonName);
     }
 
     @Step("Ввод логина из файла \"{0}\"")
