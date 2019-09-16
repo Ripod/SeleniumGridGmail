@@ -1,4 +1,4 @@
-package ru.ripod.tests.stepDefs;
+package ru.ripod.tests.stepdefs;
 
 import cucumber.api.java.After;
 import cucumber.api.java.AfterStep;
@@ -16,17 +16,46 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Properties;
 
 
 public class StepDefinition {
     //thread locals for variables used throughout whole test
-    private static ThreadLocal<String> usedBrowser = new ThreadLocal<>();
-    private static ThreadLocal<String> mailDate = new ThreadLocal<>();
-    private static ThreadLocal<String> mailTheme = new ThreadLocal<>();
-    private static ThreadLocal<String> mailBody = new ThreadLocal<>();
-    private static ThreadLocal<String> login = new ThreadLocal<>();
+
+    private static class TestDataManager {
+        private static ThreadLocal<HashMap<String, String>> storage = new ThreadLocal<>();
+        private static Logger managerLogger = LogManager.getLogger();
+
+        public static void init(){
+            storage.set(new HashMap<>());
+        }
+
+        public static String getValue(String key) {
+
+            String value = storage.get().get(key);
+            if(value != null) {
+                managerLogger.info("Получение данных по ключу {}. Получено значение {}", key, value);
+                return value;
+            }else{
+                managerLogger.warn("Получение данных по ключу {}. Значение отсутствует или пустое" , key);
+                return value;
+            }
+        }
+
+        public static void setValue(String key, String value){
+            String prevValue = storage.get().put(key, value);
+            if(prevValue == null){
+                managerLogger.info("Добавлены данные. Ключ: {}, значение: {}",key, value);
+            }else {
+                managerLogger.info("Заменены данные. Ключ: {}, прошлое значение: {}, новое значение: {}", key, prevValue, value);
+            }
+
+        }
+    }
+
+
     private Logger logger;
 
     //page object declaration
@@ -38,30 +67,33 @@ public class StepDefinition {
     private SentPage sentPage;
 
     public static void setUsedBrowser(String browserName) {
-        usedBrowser.set(browserName);
+        TestDataManager.init();
+        TestDataManager.setValue("usedBrowser", browserName);
     }
 
-    public static String getUsedBrowser(){
-        return usedBrowser.get();
+    public static String getUsedBrowser() {
+        return TestDataManager.getValue("usedBrowser");
     }
+
     /**
      * Инициализация браузера и страничных объектов
      */
     @Step("Инициализация браузера и страничных объектов")
     @Before
     public void browserInit() {
-        basicPage = new BasicPage(usedBrowser.get());
-        searchPage = new SearchPage(usedBrowser.get());
-        authorizationPage = new AuthorizationPage(usedBrowser.get());
-        mailPage = new MailPage(usedBrowser.get());
-        draftPage = new DraftPage(usedBrowser.get());
-        sentPage = new SentPage(usedBrowser.get());
-        logger = LogManager.getLogger(usedBrowser.get());
+        String browserString = getUsedBrowser();
+        basicPage = new BasicPage(browserString);
+        searchPage = new SearchPage(browserString);
+        authorizationPage = new AuthorizationPage(browserString);
+        mailPage = new MailPage(browserString);
+        draftPage = new DraftPage(browserString);
+        sentPage = new SentPage(browserString);
+        logger = LogManager.getLogger(browserString);
     }
 
     @Step("Скриншот после шага")
     @AfterStep
-    public void attachScreenshotAsStep(){
+    public void attachScreenshotAsStep() {
         basicPage.takeScreenshot();
     }
 
@@ -93,9 +125,9 @@ public class StepDefinition {
         } catch (IOException e) {
             logger.warn("Problem reading properties file");
         }
-        login.set(credProperties.getProperty(usedBrowser.get() + "login"));
+        TestDataManager.setValue("login", credProperties.getProperty(getUsedBrowser() + "login"));
         authorizationPage.switchToNextTab();
-        authorizationPage.inputLogin(login.get());
+        authorizationPage.inputLogin(TestDataManager.getValue("login"));
     }
 
     @Step("Нажатие кнопки \"{0}\" на странице авторизации")
@@ -114,7 +146,7 @@ public class StepDefinition {
         } catch (IOException e) {
             logger.warn("Problem reading properties file");
         }
-        String password = credProperties.getProperty(usedBrowser.get() + "password");
+        String password = credProperties.getProperty(getUsedBrowser() + "password");
         authorizationPage.inputPassword(password);
     }
 
@@ -140,7 +172,7 @@ public class StepDefinition {
         } catch (IOException e) {
             logger.warn("Problem reading properties file");
         }
-        String email = credProperties.getProperty(usedBrowser.get() + "receiver");
+        String email = credProperties.getProperty(getUsedBrowser() + "receiver");
         mailPage.inputReceiverEmail(email);
     }
 
@@ -149,17 +181,17 @@ public class StepDefinition {
     public void inputThemeWithCurrentTime() {
         Date mailDateRaw = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.UK);
-        mailDate.set(dateFormat.format(mailDateRaw));
-        mailTheme.set(String.format("%s mail %s", usedBrowser.get(), mailDate.get()));
-        mailPage.inputMailTheme(mailTheme.get());
+        TestDataManager.setValue("mailDate", dateFormat.format(mailDateRaw));
+        TestDataManager.setValue("mailTheme",String.format("%s mail %s", getUsedBrowser(), TestDataManager.getValue("mailDate")));
+        mailPage.inputMailTheme(TestDataManager.getValue("mailTheme"));
     }
 
     @Step("Ввод текста письма")
     @И("вводим текст письма")
     public void inputMailBody() {
         String bodyBase = "Это письмо написано в браузере %s. Дата и время: %s";
-        mailBody.set(String.format(bodyBase, usedBrowser.get(), mailDate.get()));
-        mailPage.inputMailBody(mailBody.get());
+        TestDataManager.setValue("mailBody", String.format(bodyBase, getUsedBrowser(), TestDataManager.getValue("mailDate")));
+        mailPage.inputMailBody(TestDataManager.getValue("mailBody"));
     }
 
     @Step("Закрытие окна создания письма")
@@ -177,13 +209,13 @@ public class StepDefinition {
     @Step("Проверка наличия созданного черновика")
     @Тогда("в списке писем содержится созданный нами черновик")
     public void checkCreatedDraftVisible() {
-        draftPage.checkCreatedDraftVisible(mailTheme.get());
+        draftPage.checkCreatedDraftVisible(TestDataManager.getValue("mailTheme"));
     }
 
     @Step("Выбор созданного черновика")
     @Когда("нажимаем на созданный черновик")
     public void openCreatedDraft() {
-        draftPage.openCreatedDraft(mailTheme.get());
+        draftPage.openCreatedDraft(TestDataManager.getValue("mailTheme"));
     }
 
     @Step("Проверка открытия окна создания письма")
@@ -202,20 +234,20 @@ public class StepDefinition {
         } catch (IOException e) {
             logger.warn("Problem reading properties file");
         }
-        String email = credProperties.getProperty(usedBrowser.get() + "receiver");
+        String email = credProperties.getProperty(getUsedBrowser() + "receiver");
         mailPage.checkEmailValue(email);
     }
 
     @Step("Проверка темы письма созданного черновика")
     @И("тема письма соответствует теме созданного черновика")
     public void checkMailTheme() {
-        mailPage.checkThemeValue(mailTheme.get());
+        mailPage.checkThemeValue(TestDataManager.getValue("mailTheme"));
     }
 
     @Step("Проверка текста письма созданного черновика")
     @И("текст письма соответствует тексту созданного письма")
     public void checkMailText() {
-        mailPage.checkBodyValue(mailBody.get());
+        mailPage.checkBodyValue(TestDataManager.getValue("mailBody"));
     }
 
     @Step("Отправка созданного черновика")
@@ -227,13 +259,13 @@ public class StepDefinition {
     @Step("Проверка отсутствия отправленного письма в списке черновиков")
     @Тогда("в списке черновиков не содержится созданный нами черновик")
     public void checkDraftNotShown() {
-        draftPage.checkCreatedDraftNotVisible(mailTheme.get());
+        draftPage.checkCreatedDraftNotVisible(TestDataManager.getValue("mailTheme"));
     }
 
     @Step("Проверка наличия отправленного письма в списке отправленных писем")
     @Тогда("в списке писем содержится отправленное нами письмо")
     public void checkSentLetterIsShown() {
-        sentPage.checkSentMailIsVisible(mailTheme.get());
+        sentPage.checkSentMailIsVisible(TestDataManager.getValue("mailTheme"));
     }
 
     @Step("Выход из аккаунта")
@@ -245,7 +277,7 @@ public class StepDefinition {
     @Step("Проверка выхода из аккаунта")
     @Тогда("выходим из аккаунта")
     public void checkSignedOut() {
-        authorizationPage.checkSignedOut(login.get());
+        authorizationPage.checkSignedOut(TestDataManager.getValue("login"));
     }
 
     @Step("Закрытие браузера")
