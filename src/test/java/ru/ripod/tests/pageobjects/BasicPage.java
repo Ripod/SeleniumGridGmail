@@ -16,7 +16,6 @@ public class BasicPage {
     private Logger logger;
 
     protected static String locale;
-    protected Map<String,String> elements;
     protected RemoteSingletonDriver driver;
 
 
