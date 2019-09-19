@@ -8,35 +8,17 @@ public class MailPage extends BasicPage {
     private String receiverEmailFieldXpath = "//textarea[@name='to']";
     private String themeInputFieldXpath = "//input[@name='subjectbox']";
     private String bodyInputFieldXpath = "//div[@role = 'textbox']";
-    private String newLetterWindowTitleRuXpath = "//h2//div[text()='Написать:']//following-sibling::div";
-    private String newLetterWindowTitleEnXpath = "//h2//div[text()='Compose:']//following-sibling::div";
-    private String newLetterWindowCloseRuXpath = "//img[@aria-label='Сохранить и закрыть']";
-    private String newLetterWindowCloseEnXpath = "//img[@aria-label='Save & close']";
+    private String newLetterWindowTitleXpath = "//h2//div[text()='Написать:' or text()='Compose:']//following-sibling::div";
+    private String newLetterWindowCloseXpath = "//img[@aria-label='Сохранить и закрыть' or @aria-label='Save & close']";
     private String partPageXpath = "//a[@title='%s']";
     private String filledEmailFieldXpath = "//span[contains(@email,'@')][contains(text(),'@')]";
-    private String sendButtonRuXpath = "//div[text()='Отправить']";
-    private String sendButtonEnXpath = "//div[text()='Send']";
+    private String sendButtonXpath = "//div[text()='Отправить' or text()='Send']";
     private String accountButton = "//a[contains(@aria-label, 'Аккаунт Google:')]";
     private String signOutButtonXpath = "//div[@aria-label='Информация об аккаунте']//a[text()='Выйти']";
 
 
     public MailPage(String browserName) {
         super(browserName);
-        elements = new HashMap<>();
-        switch (locale) {
-            case ("en"):
-                elements.put("Заголовок", newLetterWindowTitleEnXpath);
-                elements.put("Закрыть", newLetterWindowCloseEnXpath);
-                elements.put("Отправить", sendButtonEnXpath);
-                elements.put("Сохранение", "Draft saved");
-                break;
-            default:
-                elements.put("Заголовок", newLetterWindowTitleRuXpath);
-                elements.put("Закрыть", newLetterWindowCloseRuXpath);
-                elements.put("Отправить", sendButtonRuXpath);
-                elements.put("Сохранение", "Черновик сохранен");
-                break;
-        }
     }
 
     public void checkPageOpened() {
@@ -60,8 +42,17 @@ public class MailPage extends BasicPage {
     }
 
     public void closeWhenDraftSaved() {
-        driver.waitText(elements.get("Заголовок"), elements.get("Сохранение"));
-        driver.click(elements.get("Закрыть"));
+        String expectedText;
+        switch (locale) {
+            case "en":
+                expectedText = "Draft saved";
+                break;
+            case "ru":
+            default:
+                expectedText = "Черновик сохранен";
+        }
+        driver.waitText(newLetterWindowTitleXpath, expectedText);
+        driver.click(newLetterWindowCloseXpath);
     }
 
     public void openMailsPagePart(String partName) {
@@ -69,7 +60,7 @@ public class MailPage extends BasicPage {
     }
 
     public void checkLetterCreateEditIsOpened() {
-        driver.checkElementIsPresent(elements.get("Заголовок"));
+        driver.checkElementIsPresent(newLetterWindowTitleXpath);
     }
 
     public void checkEmailValue(String expectedValue) {
@@ -85,7 +76,7 @@ public class MailPage extends BasicPage {
     }
 
     public void pressSendButton() {
-        driver.click(elements.get("Отправить"));
+        driver.click(sendButtonXpath);
     }
 
     public void pressSignOutButton() {
