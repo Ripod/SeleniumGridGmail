@@ -50,7 +50,20 @@
                     <resultsDirectory>allure-results</resultsDirectory>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>logs</directory>
+                            <includes>
+                                <include>**/*.log</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
