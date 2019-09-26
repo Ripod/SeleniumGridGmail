@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.ripod.tests.pageobjects.*;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,38 +27,36 @@ public class StepDefinition {
 
     private static class TestDataManager {
         private static ThreadLocal<HashMap<String, String>> storage = new ThreadLocal<>();
-        private static Logger managerLogger = LogManager.getLogger();
 
-        public static void init(){
+        public static void init() {
             storage.set(new HashMap<>());
         }
 
         public static String getValue(String key) {
 
             String value = storage.get().get(key);
-            if(value != null) {
-                managerLogger.info("Получение данных по ключу {}. Получено значение {}", key, value);
+            if (value != null) {
+                logger.debug("Получение данных по ключу {}. Получено значение {}", key, value);
                 return value;
-            }else{
-                managerLogger.warn("Получение данных по ключу {}. Значение отсутствует или пустое" , key);
+            } else {
+                logger.warn("Получение данных по ключу {}. Значение отсутствует или пустое", key);
                 return value;
             }
         }
 
-        public static void setValue(String key, String value){
+        public static void setValue(String key, String value) {
             String prevValue = storage.get().put(key, value);
-            if(prevValue == null){
-                managerLogger.info("Добавлены данные. Ключ: {}, значение: {}",key, value);
-            }else {
-                managerLogger.info("Заменены данные. Ключ: {}, прошлое значение: {}, новое значение: {}", key, prevValue, value);
+            if (prevValue == null) {
+                logger.debug("Добавлены данные. Ключ: {}, значение: {}", key, value);
+            } else {
+                logger.info("Заменены данные. Ключ: {}, прошлое значение: {}, новое значение: {}", key, prevValue, value);
             }
 
         }
     }
 
 
-    private Logger logger;
-
+    private static Logger logger = LogManager.getRootLogger();
     //page object declaration
     private BasicPage basicPage;
     private SearchPage searchPage;
@@ -88,7 +87,6 @@ public class StepDefinition {
         mailPage = new MailPage(browserString);
         draftPage = new DraftPage(browserString);
         sentPage = new SentPage(browserString);
-        logger = LogManager.getLogger(browserString);
     }
 
     @Step("Скриншот после шага")
@@ -101,18 +99,21 @@ public class StepDefinition {
     @Когда("открываем страницу {string} в браузере")
     public void openPageInBrowser(String url) {
         basicPage.openPage(url);
+        logger.info("Открытие страницы {} в браузере {}", url, getUsedBrowser());
     }
 
     @Step("Нажатие кнопки {0} на главной странице")
     @И("нажимаем кнопку {string} на главной странице")
     public void pressMailButtonSearchPage(String buttonName) {
         searchPage.clickHeaderButton(buttonName);
+        logger.info("Нажатие кнопки {} на главной странице", buttonName);
     }
 
     @Step("Нажатие кнопки \"Войти\"")
     @И("нажимаем кнопку \"Войти\"")
     public void clickSignInButton() {
         searchPage.clickSignInButton();
+        logger.info("Нажатие кнопки \"Войти\" на стартовой странице почты");
     }
 
     @Step("Ввод логина из файла \"{0}\"")
@@ -128,12 +129,14 @@ public class StepDefinition {
         TestDataManager.setValue("login", credProperties.getProperty(getUsedBrowser() + "login"));
         authorizationPage.switchToNextTab();
         authorizationPage.inputLogin(TestDataManager.getValue("login"));
+        logger.info("Ввод логина");
     }
 
     @Step("Нажатие кнопки \"{0}\" на странице авторизации")
     @И("нажимаем кнопку {string} на странице авторизации")
     public void pressAuthPageButton(String buttonName) {
         authorizationPage.pressButton(buttonName);
+        logger.info("Нажатие кнопки {} на странице авторизации", buttonName);
     }
 
     @Step("Ввод пароля из файла \"{0}\"")
@@ -148,18 +151,21 @@ public class StepDefinition {
         }
         String password = credProperties.getProperty(getUsedBrowser() + "password");
         authorizationPage.inputPassword(password);
+        logger.info("Ввод пароля");
     }
 
     @Step("Проверка открытия страницы почты")
     @Тогда("открывается главная страница почты")
     public void checkMailPage() {
         mailPage.checkPageOpened();
+        logger.info("Проверка открытия страницы почты");
     }
 
     @Step("Нажатие кнопки создания письма")
     @Когда("нажимаем кнопку создания письма")
     public void pressButtonCreateLetter() {
         mailPage.pressCreateLetter();
+        logger.info("Нажатие кнопки создания письма");
     }
 
     @Step("Ввод получателя из файла {0}")
@@ -174,6 +180,7 @@ public class StepDefinition {
         }
         String email = credProperties.getProperty(getUsedBrowser() + "receiver");
         mailPage.inputReceiverEmail(email);
+        logger.info("Ввод получателя");
     }
 
     @Step("Ввод темы письма")
@@ -182,8 +189,9 @@ public class StepDefinition {
         Date mailDateRaw = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.UK);
         TestDataManager.setValue("mailDate", dateFormat.format(mailDateRaw));
-        TestDataManager.setValue("mailTheme",String.format("%s mail %s", getUsedBrowser(), TestDataManager.getValue("mailDate")));
+        TestDataManager.setValue("mailTheme", String.format("%s mail %s", getUsedBrowser(), TestDataManager.getValue("mailDate")));
         mailPage.inputMailTheme(TestDataManager.getValue("mailTheme"));
+        logger.info("Ввод темы нового письма");
     }
 
     @Step("Ввод текста письма")
@@ -192,41 +200,48 @@ public class StepDefinition {
         String bodyBase = "Это письмо написано в браузере %s. Дата и время: %s";
         TestDataManager.setValue("mailBody", String.format(bodyBase, getUsedBrowser(), TestDataManager.getValue("mailDate")));
         mailPage.inputMailBody(TestDataManager.getValue("mailBody"));
+        logger.info("Ввод текста нового письма");
     }
 
     @Step("Закрытие окна создания письма")
     @И("закрываем окно создания письма")
     public void closeNewLetterWindow() {
         mailPage.closeWhenDraftSaved();
+        logger.info("Закрытие окна создания письма после сохранения черновика");
     }
 
     @Step("Открытие страницы \"{0}\" в почте")
     @И("открываем страницу {string} в почте")
     public void openPagePartInMail(String partName) {
+        logger.info("Открытие раздела {} в почте", partName);
         mailPage.openMailsPagePart(partName);
     }
 
     @Step("Проверка наличия созданного черновика")
     @Тогда("в списке писем содержится созданный нами черновик")
     public void checkCreatedDraftVisible() {
+        logger.info("Проверка наличия созданного ранее черновика");
         draftPage.checkCreatedDraftVisible(TestDataManager.getValue("mailTheme"));
     }
 
     @Step("Выбор созданного черновика")
     @Когда("нажимаем на созданный черновик")
     public void openCreatedDraft() {
+        logger.info("Выбор созданного ранее черновика");
         draftPage.openCreatedDraft(TestDataManager.getValue("mailTheme"));
     }
 
     @Step("Проверка открытия окна создания письма")
     @Тогда("открывается окно создания или редактирования письма")
     public void checkLetterCreateEditIsOpened() {
+        logger.info("Проверка открытия окна создания письма");
         mailPage.checkLetterCreateEditIsOpened();
     }
 
     @Step("Проверка адреса получателя из файла \"{0}\"")
     @И("в поле получателя указан адрес из файла {string}")
     public void checkReceiverEmailFromFile(String fileName) {
+        logger.info("Проверка адреса получателя");
         Properties credProperties = new Properties();
         try {
             InputStream credInputStream = new FileInputStream(fileName);
@@ -241,42 +256,49 @@ public class StepDefinition {
     @Step("Проверка темы письма созданного черновика")
     @И("тема письма соответствует теме созданного черновика")
     public void checkMailTheme() {
+        logger.info("Проверка темы письма");
         mailPage.checkThemeValue(TestDataManager.getValue("mailTheme"));
     }
 
     @Step("Проверка текста письма созданного черновика")
     @И("текст письма соответствует тексту созданного письма")
     public void checkMailText() {
+        logger.info("Проверка текста письма");
         mailPage.checkBodyValue(TestDataManager.getValue("mailBody"));
     }
 
     @Step("Отправка созданного черновика")
     @Когда("нажимаем кнопку \"Отправить\" в окне нового письма")
     public void pressSendInMailWindow() {
+        logger.info("Отправка созданного черновика");
         mailPage.pressSendButton();
     }
 
     @Step("Проверка отсутствия отправленного письма в списке черновиков")
     @Тогда("в списке черновиков не содержится созданный нами черновик")
     public void checkDraftNotShown() {
+        logger.info("Проверка отсутствия отправленного письма в списке черновиков");
         draftPage.checkCreatedDraftNotVisible(TestDataManager.getValue("mailTheme"));
     }
 
     @Step("Проверка наличия отправленного письма в списке отправленных писем")
     @Тогда("в списке писем содержится отправленное нами письмо")
     public void checkSentLetterIsShown() {
+        logger.info("Проверка наличия отправленного письма в списке отправленных писем");
         sentPage.checkSentMailIsVisible(TestDataManager.getValue("mailTheme"));
     }
 
     @Step("Выход из аккаунта")
     @Когда("нажимаем на кнопку аккаунта и нажимаем \"Выйти\"")
     public void pressSignOutButton() {
+        logger.info("Выход из аккаунта");
         mailPage.pressSignOutButton();
     }
 
     @Step("Проверка выхода из аккаунта")
     @Тогда("выходим из аккаунта")
     public void checkSignedOut() {
+        logger.info("Проверка выхода из аккаунта");
         authorizationPage.checkSignedOut(TestDataManager.getValue("login"));
     }
 

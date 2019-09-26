@@ -34,7 +34,7 @@ public class RemoteSingletonDriver {
         remoteWebDriver.get("http://" + url);
     }
 
-    Logger infoLogger;
+    Logger logger;
 
     public static RemoteSingletonDriver getInstance(String browserName) {
         if (remoteSingletonDriver.get() == null) {
@@ -44,17 +44,18 @@ public class RemoteSingletonDriver {
     }
 
     private RemoteSingletonDriver(String browserName) {
-        infoLogger = LogManager.getLogger(browserName);
+        logger = LogManager.getLogger(browserName);
         try {
             InputStream propInputStream = new FileInputStream("selenium.config");
             properties.load(propInputStream);
         } catch (IOException e) {
-            infoLogger.warn("Problem reading properties file");
+            logger.warn("Problem reading properties file");
         }
         System.setProperty("webdriver.chrome.driver", properties.getProperty("webdriver.chrome.driver", "bin/chromedriver.exe"));
         System.setProperty("webdriver.gecko.driver", properties.getProperty("webdriver.gecko.driver", "bin/geckodriver.exe"));
         boolean remoteFlag = Boolean.valueOf(properties.getProperty("remote", "false"));
         if (remoteFlag) {
+            logger.trace("Получение удаленного драйвера");
             DesiredCapabilities capabilities = new DesiredCapabilities();
             capabilities.setBrowserName(browserName);
             String baseUrl = properties.getProperty("wdhost", "127.0.0.1");
@@ -64,12 +65,14 @@ public class RemoteSingletonDriver {
                 remoteWebDriver = new RemoteWebDriver(new URL(fullURL), capabilities);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
-                infoLogger.error("wrong URL format");
+                logger.error("wrong URL format");
             }
         } else {
+            logger.trace("Получение локального драйвера");
             switch (browserName) {
                 case "firefox":
                     remoteWebDriver = new FirefoxDriver();
+                    break;
                 case "chrome":
                 default:
                     remoteWebDriver = new ChromeDriver();
@@ -81,11 +84,13 @@ public class RemoteSingletonDriver {
     }
 
     private WebElement getElementByXpath(String xpath) {
+        logger.trace("Поиск элемента по xpath: " + xpath);
         By xpathSelector = By.xpath(xpath);
         return Objects.requireNonNull(elementReceiving(xpathSelector));
     }
 
     private WebElement getElementByCSS(String CSS) {
+        logger.trace("Поиск элемента по CSS: " + CSS);
         By cssSelector = By.cssSelector(CSS);
         return Objects.requireNonNull(elementReceiving(cssSelector));
     }
@@ -99,27 +104,31 @@ public class RemoteSingletonDriver {
                 element = wait.until(ExpectedConditions.elementToBeClickable(selector));
                 return element;
             } catch (StaleElementReferenceException e) {
-                infoLogger.info("Stale exception", e);
+                logger.trace("Stale exception", e);
             } catch (Exception exception) {
-                infoLogger.info("Caught exception", exception);
+                logger.trace("Caught exception", exception);
             }
         }
         return null;
     }
 
     public void click(String xpath) {
+        logger.trace("Клик по элементу с xpath: " + xpath);
         Objects.requireNonNull(getElementByXpath(xpath)).click();
     }
 
     public void sendKeys(String xpath, String value) {
+        logger.trace("Ввод текста {} в поле с xpath: {}", value, xpath);
         Objects.requireNonNull(getElementByXpath(xpath)).sendKeys(value);
     }
 
     public void sendKeysByCSS(String CSS, String value) {
+        logger.trace("Ввод текста {} в поле с CSS: {}", value, CSS);
         Objects.requireNonNull(getElementByCSS(CSS)).sendKeys(value);
     }
 
     public void switchToNextTab() {
+        logger.trace("Переключение на следующую вкладку");
         wait.until(ExpectedConditions.numberOfWindowsToBe(2));
         Set<String> windows = remoteWebDriver.getWindowHandles();
         windows.stream().filter(o -> !o.equals(remoteWebDriver.getWindowHandle()))
@@ -128,10 +137,12 @@ public class RemoteSingletonDriver {
     }
 
     public void checkElementIsPresent(String xpath) {
+        logger.trace("Проверка наличия элемента по xpath: " + xpath);
         Assert.assertNotNull(getElementByXpath(xpath));
     }
 
     public void checkElementNotPresent(String xpath) {
+        logger.trace("Проверка отстутствия элемента по xpath: " + xpath);
         try {
             wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(xpath)));
         } catch (TimeoutException exception) {
@@ -140,15 +151,18 @@ public class RemoteSingletonDriver {
     }
 
     public void waitText(String xpath, String text) {
+        logger.trace("Ожидание, пока текст элемента с xpath '{}' станет равен '{}'", xpath, text);
         wait.until(ExpectedConditions.textToBe(By.xpath(xpath), text));
     }
 
     public void checkElementText(String xpath, String expectedValue) {
+        logger.trace("Проверка, что текст элемента с xpath '{}' равен '{}'", xpath, expectedValue);
         String actualValue = Objects.requireNonNull(getElementByXpath(xpath)).getText();
         Assert.assertEquals(actualValue, expectedValue);
     }
 
     public void checkElementValue(String xpath, String expectedValue) {
+        logger.trace("Проверка, что значение элемента с xpath '{}' равен '{}'", xpath, expectedValue);
         String actualValue = Objects.requireNonNull(getElementByXpath(xpath)).getAttribute("value");
         Assert.assertEquals(actualValue, expectedValue);
     }
